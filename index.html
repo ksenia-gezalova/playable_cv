@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.1.3/pixi.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+    }
+
+    canvas {
+      display: block;
+      background-color: aquamarine;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="mycanvas"></canvas>
+  <script>
+    const canvas = document.getElementById("mycanvas");
+    // settings for canvas sizes
+    const settings = {
+      height: 250,
+      width: 630,
+      // set true if you want resize and want height and width equal 100%
+      windowFitting: false,
+    };
+
+    const getFullSize = () => ({
+      width: settings.windowFitting ? window.innerWidth : settings.width,
+      height: settings.windowFitting ? window.innerHeight : settings.height,
+    });
+
+    const app = new PIXI.Application({
+      view: canvas,
+      width: getFullSize().width,
+      height: getFullSize().height,
+      autoResize: true
+    });
+    
+    document.body.appendChild(app.view);
+
+    // load sprite with all images
+    PIXI.Loader.shared.add("images/sprite.json").load(setup);
+
+
+    function setup() {
+      let sheet = PIXI.Loader.shared.resources["images/sprite.json"].spritesheet;
+
+      const background = sheet.textures["office.png"];
+      //let background = PIXI.Texture.from("images/office.png");
+      background.frame.width = getFullSize().width;
+      background.frame.height = getFullSize().height;
+      background.interactive = true;
+
+      let backgroundTiling = new PIXI.TilingSprite(
+        background,
+        getFullSize().width,
+        getFullSize().height
+      );
+
+      const midTexture = sheet.textures["floor.jpg"];
+      midTexture.frame.width = getFullSize().width;
+      midTexture.frame.height = getFullSize().height;
+
+
+      let midTextureTiling = new PIXI.TilingSprite(
+        midTexture,
+        getFullSize().width,
+        40,
+      );
+
+      midTextureTiling.position.y = 225;
+
+      app.stage.addChild(backgroundTiling);
+      app.stage.addChild(midTextureTiling);
+
+      // inital settings for psyduck
+      const psyMovie = new PIXI.AnimatedSprite(sheet.animations["psyduck"]);
+      psyMovie.position.set(130, 190);
+      psyMovie.anchor.set(0.5);
+      psyMovie.width = 240;
+      psyMovie.height = 180;
+      psyMovie.animationSpeed = 0.1;
+      psyMovie.play();
+
+      // initial settings for shell
+      const shellMovie = new PIXI.AnimatedSprite(sheet.animations["shell"]);
+      shellMovie.position.set(530, 198);
+      shellMovie.anchor.set(0.5);
+      shellMovie.width = 240;
+      shellMovie.height = 180;
+      shellMovie.animationSpeed = 0.1;
+      shellMovie.play();
+      shellMovie.interactive = true;
+      shellMovie.cursor = 'pointer';
+      shellMovie.hitArea = new PIXI.Rectangle(0, 0, 200, 100);
+
+      shellMovie.on('pointerdown', (event) => onClick(shellMovie));
+
+      shellMovie.on('pointerover', (event) => onPointerOver(shellMovie));
+
+      shellMovie.on('pointerout', (event) => onPointerOut(shellMovie));
+
+      function onClick(object) {
+        object.scale.x /= 1.2;
+        object.scale.y /= 1.2;
+
+        if(object.scale.x < 0.35) {
+          app.stage.removeChild(object);
+        }
+      }
+
+      function onPointerOver(object) {
+        object.tint = 0x666666;
+      }
+
+      function onPointerOut(object) {
+        object.tint = 0xFFFFFF;
+      }
+
+      // initial settings for pig
+      const pigMovie = new PIXI.AnimatedSprite(sheet.animations["pig"]);
+      pigMovie.position.set(730, 190);
+      pigMovie.anchor.set(0.5);
+      pigMovie.width = 240;
+      pigMovie.height = 180;
+      pigMovie.animationSpeed = 0.1;
+      pigMovie.play();
+
+      app.stage.addChild(psyMovie);
+      app.stage.addChild(shellMovie);
+      app.stage.addChild(pigMovie);
+
+
+
+      let count = 0;
+
+      app.ticker.add(() => {
+        count += 0.005;
+
+        backgroundTiling.tilePosition.x -= 0.3;
+        midTextureTiling.tilePosition.x -= 0.7;
+        
+
+        if(shellMovie.x > -105) {
+          // show labels
+          app.ticker.stop();
+
+          shellMovie.x -= 1;
+        } else {
+          pigMovie.x -= 1;
+        }
+
+      });
+
+
+      function onresize() {
+        app.renderer.resize(getFullSize().width, getFullSize().height);
+        backgroundTiling.width = getFullSize().width;
+        backgroundTiling.height = getFullSize().height;
+      }
+
+      if(settings.windowFitting) window.addEventListener("resize", onresize);
+    }
+  </script>
+</body>
+</html>

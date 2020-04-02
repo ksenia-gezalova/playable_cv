@@ -1,0 +1,81 @@
+{"frames": {
+
+"floor.jpg":
+{
+	"frame": {"x":0,"y":0,"w":800,"h":800},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":800,"h":800},
+	"sourceSize": {"w":800,"h":800}
+},
+"office.png":
+{
+	"frame": {"x":800,"y":0,"w":669,"h":358},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":669,"h":358},
+	"sourceSize": {"w":669,"h":358}
+},
+"pig-0.png":
+{
+	"frame": {"x":0,"y":800,"w":480,"h":360},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":480,"h":360},
+	"sourceSize": {"w":480,"h":360}
+},
+"pig-1.png":
+{
+	"frame": {"x":480,"y":800,"w":480,"h":360},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":480,"h":360},
+	"sourceSize": {"w":480,"h":360}
+},
+"psyduck-0.png":
+{
+	"frame": {"x":960,"y":800,"w":480,"h":360},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":480,"h":360},
+	"sourceSize": {"w":480,"h":360}
+},
+"psyduck-1.png":
+{
+	"frame": {"x":0,"y":1160,"w":480,"h":360},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":480,"h":360},
+	"sourceSize": {"w":480,"h":360}
+},
+"shell-0.png":
+{
+	"frame": {"x":480,"y":1160,"w":480,"h":360},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":480,"h":360},
+	"sourceSize": {"w":480,"h":360}
+},
+"shell-1.png":
+{
+	"frame": {"x":960,"y":1160,"w":480,"h":360},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":480,"h":360},
+	"sourceSize": {"w":480,"h":360}
+}},
+"animations": {
+	"pig": ["pig-0.png","pig-1.png"],
+	"psyduck": ["psyduck-0.png","psyduck-1.png"],
+	"shell": ["shell-0.png","shell-1.png"]
+},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "sprite.png",
+	"format": "RGBA8888",
+	"size": {"w":1469,"h":1520},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:bf9d8a1930639f86ea9dd326e4142aab:837a88c4ae012a5eed995b783f4774e2:68d88b3cf7eafc9b5accfffdfb2fda91$"
+}
+}
