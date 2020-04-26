@@ -46,6 +46,8 @@
 
     // load sprite with all images
     PIXI.Loader.shared.add("images/sprite.json").load(setup);
+    // help text foe start labels
+    let help;
 
 
     function setup() {
@@ -86,10 +88,9 @@
       psyMovie.width = 240;
       psyMovie.height = 180;
       psyMovie.animationSpeed = 0.1;
-      psyMovie.play();
 
       // initial settings for shell
-      const shellMovie = new PIXI.AnimatedSprite(sheet.animations["shell"]);
+      let shellMovie = new PIXI.AnimatedSprite(sheet.animations["shell"]);
       shellMovie.position.set(530, 198);
       shellMovie.anchor.set(0.5);
       shellMovie.width = 240;
@@ -99,6 +100,9 @@
       shellMovie.interactive = true;
       shellMovie.cursor = 'pointer';
       shellMovie.hitArea = new PIXI.Rectangle(0, 0, 200, 100);
+      // need to resolve click function
+      shellMovie.name = 'shell';
+      shellMovie.ticker = 0;
 
       shellMovie.on('pointerdown', (event) => onClick(shellMovie));
 
@@ -107,16 +111,26 @@
       shellMovie.on('pointerout', (event) => onPointerOut(shellMovie));
 
       function onClick(object) {
-        object.scale.x /= 1.2;
-        object.scale.y /= 1.2;
+        object.tint = 0xFF4444;
+        object.scale.x /= 1.18;
+        object.scale.y /= 1.18;
+
+
+        if (object.name == 'shell') {
+          help.text = 'You are good! Click one more';
+          shellMovie.ticker++; 
+        }
 
         if(object.scale.x < 0.35) {
           app.stage.removeChild(object);
+          object.x = -200;
+          object.name == 'shell' ? help.text = 'Prepare for the next! Defeat him by clicking!' : help.text = 'Great work!';
+          return;
         }
       }
 
       function onPointerOver(object) {
-        object.tint = 0x666666;
+        object.tint = 0xaaaaaa;
       }
 
       function onPointerOut(object) {
@@ -130,7 +144,18 @@
       pigMovie.width = 240;
       pigMovie.height = 180;
       pigMovie.animationSpeed = 0.1;
-      pigMovie.play();
+      pigMovie.interactive = true;
+      pigMovie.cursor = 'pointer';
+      pigMovie.hitArea = new PIXI.Rectangle(0, 0, 200, 100);
+      // need to resolve click function
+      pigMovie.name = 'pig';
+      pigMovie.ticker = 0;
+      
+      pigMovie.on('pointerdown', (event) => onClick(pigMovie));
+
+      pigMovie.on('pointerover', (event) => onPointerOver(pigMovie));
+
+      pigMovie.on('pointerout', (event) => onPointerOut(pigMovie));
 
       app.stage.addChild(psyMovie);
       app.stage.addChild(shellMovie);
@@ -142,20 +167,55 @@
 
       app.ticker.add(() => {
         count += 0.005;
-
-        backgroundTiling.tilePosition.x -= 0.3;
-        midTextureTiling.tilePosition.x -= 0.7;
         
 
-        if(shellMovie.x > -105) {
-          // show labels
-          app.ticker.stop();
+        if(shellMovie && shellMovie.x > -105) {
+          // show labels and muted bg and psyduck
+          let blurFilter = new PIXI.filters.BlurFilter();
+          let coloredFilter = new PIXI.filters.ColorMatrixFilter();
+          coloredFilter.greyscale(0.2);
 
-          shellMovie.x -= 1;
+          psyMovie.filters = [blurFilter, coloredFilter];
+          backgroundTiling.filters = [blurFilter, coloredFilter];
+          midTextureTiling.filters = [blurFilter, coloredFilter];
+
+          if (!help) {
+            help = new PIXI.Text('Click on Shell to defeat her!', { font: 'bold 12pt Arial', fill: 'white' });
+            help.position.y = 25;
+            help.position.x = 10;
+            app.stage.addChild(help);
+          }
+
+          if (shellMovie.ticker > 1) {
+            shellMovie.x -= 1;
+            backgroundTiling.tilePosition.x -= 0.3;
+            midTextureTiling.tilePosition.x -= 0.7;
+            psyMovie.play();
+
+            //remove filters
+            psyMovie.filters = null;
+            backgroundTiling.filters = null;
+            midTextureTiling.filters = null;
+            help.style.fill = 'black';
+          }
         } else {
           pigMovie.x -= 1;
+          pigMovie.play();
+          backgroundTiling.tilePosition.x -= 0.3;
+          midTextureTiling.tilePosition.x -= 0.7;
+          psyMovie.play();
+
+          if (pigMovie && pigMovie.x > -110) {
+            help.text = 'Prepare for the next! Defeat him by clicking!'
+          }
         }
 
+        if ((shellMovie.x < psyMovie.x && shellMovie.x > 0) || (pigMovie.x < psyMovie.x && pigMovie.x > 0)) {
+          psyMovie.tint = Math.random() * 0xFFFFFF;
+          (shellMovie.x < psyMovie.x && shellMovie.x > 0) ? help.text = 'Oh no, poor psyduck!' : help.text = 'Oh no.. but you still can win!'
+        } else {
+          psyMovie.tint = 16777215;
+        }
       });
 
 
