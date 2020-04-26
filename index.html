@@ -54,7 +54,6 @@
       let sheet = PIXI.Loader.shared.resources["images/sprite.json"].spritesheet;
 
       const background = sheet.textures["office.png"];
-      //let background = PIXI.Texture.from("images/office.png");
       background.frame.width = getFullSize().width;
       background.frame.height = getFullSize().height;
       background.interactive = true;
@@ -80,6 +79,21 @@
 
       app.stage.addChild(backgroundTiling);
       app.stage.addChild(midTextureTiling);
+
+      let button = PIXI.Sprite.from("images/button.png");
+      button.width = 400;
+      button.height = 400;
+      button.interactive = true;
+      button.cursor = 'pointer';
+      button.hitArea = new PIXI.Rectangle(button.top, button.left, button.width, button.height);
+      button.position.x = (settings.width / 2) - (button.width / 2);
+      button.position.y = (settings.height / 2) - (button.height / 2) + 20;
+
+
+      button.on('pointerdown', (event) => {
+        window.location.assign("http://www.mozilla.org");
+      });
+
 
       // inital settings for psyduck
       const psyMovie = new PIXI.AnimatedSprite(sheet.animations["psyduck"]);
@@ -168,12 +182,12 @@
       app.ticker.add(() => {
         count += 0.005;
         
+        let blurFilter = new PIXI.filters.BlurFilter();
+        let coloredFilter = new PIXI.filters.ColorMatrixFilter();
+        coloredFilter.greyscale(0.2);
 
         if(shellMovie && shellMovie.x > -105) {
-          // show labels and muted bg and psyduck
-          let blurFilter = new PIXI.filters.BlurFilter();
-          let coloredFilter = new PIXI.filters.ColorMatrixFilter();
-          coloredFilter.greyscale(0.2);
+          // show labels and muted bg and psyduck        
 
           psyMovie.filters = [blurFilter, coloredFilter];
           backgroundTiling.filters = [blurFilter, coloredFilter];
@@ -205,7 +219,7 @@
           midTextureTiling.tilePosition.x -= 0.7;
           psyMovie.play();
 
-          if (pigMovie && pigMovie.x > -110) {
+          if (pigMovie && pigMovie.x > -110 && !button) {
             help.text = 'Prepare for the next! Defeat him by clicking!'
           }
         }
@@ -215,6 +229,13 @@
           (shellMovie.x < psyMovie.x && shellMovie.x > 0) ? help.text = 'Oh no, poor psyduck!' : help.text = 'Oh no.. but you still can win!'
         } else {
           psyMovie.tint = 16777215;
+        }
+
+        if(help.text === 'Great work!' || help.text === 'Oh no.. but you still can win!') {
+          psyMovie.filters = [blurFilter];
+          backgroundTiling.filters = [blurFilter];
+          midTextureTiling.filters = [blurFilter];
+          app.stage.addChild(button);
         }
       });
 
